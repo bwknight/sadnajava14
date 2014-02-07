@@ -4,7 +4,7 @@
  * and open the template in the editor.
  */
 
-package chat1;
+package chat;
 
 import java.util.Collections;
 import java.util.Date;

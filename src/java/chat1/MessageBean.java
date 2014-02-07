@@ -6,8 +6,6 @@
 
 package chat1;
 
-import javax.faces.bean.ManagedBean;
-import javax.faces.bean.ViewScoped;
 
 import java.io.Serializable;
 import java.util.Collections;
@@ -45,6 +43,10 @@ public class MessageBean implements Serializable {
         _currMessage = new Message();
     }
  
+    public String getFoo(){
+        return "fooooooo"; //new Date().toString();
+    }
+    
     public Date getLastUpdate() {
         return _lastUpdate;
     }
@@ -81,6 +83,11 @@ public class MessageBean implements Serializable {
             FacesMessage fm = new FacesMessage("#" + (++i) + ' ' + message1.getMessage());
             FacesContext.getCurrentInstance().addMessage(null, fm);
         }
+        
+    }
+    
+     public List<Message> getAllMessages() {
+        return mm.getAll(null);
     }
     
     public void firstUnreadMessage(ActionEvent evt) {
@@ -90,10 +97,10 @@ public class MessageBean implements Serializable {
         System.out.println("m: " + m);
   
 //       ctx.addCallbackParam("ok", m!=null);
-//       if(m==null)
-//           return;
+       if(m==null)
+           return;
 // 
-//       lastUpdate = m.getDateSent();
+       _lastUpdate = m.getDateSent();
 // 
 //       ctx.addCallbackParam("user", m.getUser());
 //       ctx.addCallbackParam("dateSent", m.getDateSent().toString());

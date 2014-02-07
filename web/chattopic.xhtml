@@ -5,51 +5,37 @@
       xmlns:f="http://java.sun.com/jsf/core"
       >
     <h:head>
-        <title>Chat topic #{user.topic}</title>
+        <title>Chat: topic #{user.topic}, user is #{user.name}</title>
     </h:head>
- <script type="text/javascript">
-
-        function refreshMsgsEventListener(data){
-            // After update of HTML DOM based on ajax response..
-            if (data.status === "success") {
-                console.log(data);
-            }
-        }
-
-        setInterval(function(){document.getElementById('chatForm:refreshMsgs').click();},10000);
-   
-
+    <script type="text/javascript">
+        setInterval(function() {
+            document.getElementById('chatForm:refreshMsgs').click();
+        }, 3000);
     </script>
     <h:body>
-        <h:form prependId="false">
-            <h:panelGrid columns="2">
-                Text: <h:inputText value="#{messageBean.message.message}"/>
-                <h:commandButton type="reset" value="Clear"/>
-                <h:commandButton value="Send!" action="#{messageBean.sendMessage()}"/>
-            </h:panelGrid>
-        </h:form>
-        <h:form>
-            <h:commandButton value="peak" action="#{messageBean.peakMessage()}"/>
-            <h:commandButton value="peak all" action="#{messageBean.peakMessages()}"/>
-        </h:form>
-        <hr/>
-        <h3>Live chat</h3>
+        <h1>Live chat</h1>
         <h:form id="chatForm">
-            <h:commandButton id="refreshMsgs" value="ajax1"> 
-                <f:ajax onevent="refreshMsgsEventListener" render="outputGroup"/>                
-            </h:commandButton>
-
             <h:dataTable id="outputGroup" value="#{messageBean.getAllMessages()}" var="msg"
                          rendered="#{!facesContext.validationFailed}">
+                <h:column><h:outputText value="#{msg.dateSent}"><f:convertDateTime pattern="hh:mm:ss" /></h:outputText></h:column>
                 <h:column>#{msg.user}</h:column>
                 <h:column>#{msg.message}</h:column>
-                <h:column><h:outputText value="#{msg.dateSent}"><f:convertDateTime pattern="yyyy-MM-dd hh:mm:ss" /></h:outputText></h:column>
             </h:dataTable>
 
         </h:form>
-
-
-        <div id="debug">debug</div>
-        <h:messages/>
+        <hr/>
+        <h:form>
+            Say something: <h:inputText value="#{messageBean.message.message}"/>
+            <h:commandButton value="Send!" action="#{messageBean.sendMessage()}"/>
+            <h:commandButton type="reset" value="Clear"/>
+        </h:form>
+        <h:form>
+            <h:commandButton id="refreshMsgs" value="refresh"> 
+                <f:ajax render=":chatForm:outputGroup"/>                
+            </h:commandButton>
+        </h:form> 
+        <h:form>            
+            <h:commandButton value="back" action="welcome"/>
+        </h:form>            
     </h:body>
 </html>

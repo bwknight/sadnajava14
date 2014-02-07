@@ -12,6 +12,15 @@ public class Message implements Serializable {
     private Date dateSent;
     private String user;
     private String message;
+    private String topic;
+
+    public String getTopic() {
+        return topic;
+    }
+
+    public void setTopic(String topic) {
+        this.topic = topic;
+    }
  
     public Date getDateSent() {
         return dateSent;

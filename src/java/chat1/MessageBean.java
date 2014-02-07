@@ -8,17 +8,12 @@ package chat1;
 
 
 import java.io.Serializable;
-import java.util.Collections;
 import java.util.Date;
-import java.util.LinkedList;
 import java.util.List;
 import javax.ejb.EJB;
-import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.ViewScoped;
-import javax.faces.context.FacesContext;
-import javax.faces.event.ActionEvent;
 //import org.primefaces.context.RequestContext;
 /**
  *
@@ -29,7 +24,7 @@ import javax.faces.event.ActionEvent;
 public class MessageBean implements Serializable {
  
     @EJB
-    MessageManagerLocal _msgManager;
+    MessageManager _msgManager;
     
     @ManagedProperty(value="#{user}")    
     UserBean user;
@@ -67,49 +62,21 @@ public class MessageBean implements Serializable {
  
     public void sendMessage() {
         _currMessage.setUser(user.getName()); 
+        _currMessage.setTopic(user.getTopic()); 
         _msgManager.sendMessage(_currMessage);        
-        FacesMessage fm = new FacesMessage("sent: " + _currMessage.getMessage());
-        FacesContext.getCurrentInstance().addMessage(null, fm);
         this._currMessage = new Message();
     }
  
-    public void peakMessage() {
-        Message m = _msgManager.getFirstAfter(_lastUpdate);
-        String fms =  "peak: " + ((m == null) ? "N\\A" : m.getMessage());
-        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(fms));
-    }
-    
-    public void peakMessages() {
-        List<Message> mlist = _msgManager.getAll(null);
-        int i = 0;
-        for (Message message1 : mlist) {
-            FacesMessage fm = new FacesMessage("#" + (++i) + ' ' + message1.getMessage());
-            FacesContext.getCurrentInstance().addMessage(null, fm);
-        }
-        
-    }
     
     public List<Message> getAllMessages() {
-        return _msgManager.getAll(null);
+        _lastUpdate = new Date();
+        return _msgManager.getAll(this.user.getTopic(), null);
     }
     
-    public void firstUnreadMessage(ActionEvent evt) {
-//       RequestContext ctx = RequestContext.getCurrentInstance();
-// 
-       Message m = _msgManager.getFirstAfter(_lastUpdate);
-        System.out.println("m: " + m);
-  
-//       ctx.addCallbackParam("ok", m!=null);
-       if(m==null)
-           return;
-// 
-       _lastUpdate = m.getDateSent();
-// 
-//       ctx.addCallbackParam("user", m.getUser());
-//       ctx.addCallbackParam("dateSent", m.getDateSent().toString());
-//       ctx.addCallbackParam("text", m.getMessage());
-// 
+    public List<Message> getAllMessagesAdmin() {
+        _lastUpdate = new Date();
+        return _msgManager.getAll(null, null);
     }
- 
+    
 }
 

@@ -20,18 +20,16 @@ import javax.ejb.Startup;
 
 @Singleton
 @Startup
-public class MessageManager implements MessageManagerLocal {
+public class MessageManager {
  
     private final List messages =
             Collections.synchronizedList(new LinkedList());;
  
-    @Override
     public void sendMessage(Message msg) {
         messages.add(msg);
         msg.setDateSent(new Date());
     }
  
-    @Override
     public Message getFirstAfter(Date after) {
         if(messages.isEmpty())
             return null;
@@ -45,14 +43,17 @@ public class MessageManager implements MessageManagerLocal {
         return null;
     }
     
-    @Override
-    public List<Message> getAll(Date after) {
+    public List<Message> getAll(String topic, Date after) {
         LinkedList<Message> res = new LinkedList<>();
         for(Object mo : messages) {
             Message m = (Message) mo;
             if((after != null) && (m.getDateSent().after(after)))
                 continue;
 
+            if ((topic != null) && 
+                    ((m.getTopic() == null) || (m.getTopic().equals(topic) == false)) )
+                continue;
+            
             res.add(m);
         }
         return res;

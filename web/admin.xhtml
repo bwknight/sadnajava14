@@ -1,0 +1,46 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"      
+      xmlns:f="http://java.sun.com/jsf/core"
+      >
+    <h:head>
+        <title>Chat ADMIN</title>
+    </h:head>
+    <script type="text/javascript">
+        setInterval(function() {
+            document.getElementById('chatForm:refreshMsgs').click();
+        }, 3000);
+    </script>
+    <h:body>
+        <h1>ADMIN</h1>
+        <ul>
+            <li>
+                <div>Live chat </div>
+                <h:form id="chatForm">
+                    <h:dataTable id="outputGroup" value="#{messageBean.getAllMessagesAdmin()}" var="msg"
+                                 rendered="#{!facesContext.validationFailed}">
+                        <h:column><h:outputText value="#{msg.dateSent}"><f:convertDateTime pattern="HH:mm:ss" /></h:outputText></h:column>
+                        <h:column>#{msg.topic}</h:column>
+                        <h:column>#{msg.user}</h:column>
+                        <h:column>#{msg.message}</h:column>                        
+                    </h:dataTable>
+
+                </h:form>
+                <hr/>
+                <h:form>
+                    <h:commandButton id="refreshMsgs" value="refresh"> 
+                        <f:ajax render=":chatForm:outputGroup"/>                
+                    </h:commandButton>
+                </h:form> 
+            </li>
+            <li>
+                <div>Queues</div>
+            </li>
+        </ul>
+        <h:form>            
+            <h:commandButton value="exit" action="welcome"/>
+        </h:form>   
+
+    </h:body>
+</html>

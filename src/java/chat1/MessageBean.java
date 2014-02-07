@@ -28,11 +28,18 @@ public class MessageBean implements Serializable {
     
     @ManagedProperty(value="#{user}")    
     UserBean user;
+    
+    @ManagedProperty(value="#{topic}")    
+    TopicBean topic;    
 
     public void setUser(UserBean user) {
         this.user = user;
     }
- 
+
+    public void setTopic(TopicBean topic) {
+        this.topic = topic;
+    }
+
     private Date _lastUpdate;
     private Message _currMessage;
  
@@ -62,7 +69,7 @@ public class MessageBean implements Serializable {
  
     public void sendMessage() {
         _currMessage.setUser(user.getName()); 
-        _currMessage.setTopic(user.getTopic()); 
+        _currMessage.setTopic(topic.getName()); 
         _msgManager.sendMessage(_currMessage);        
         this._currMessage = new Message();
     }
@@ -70,7 +77,7 @@ public class MessageBean implements Serializable {
     
     public List<Message> getAllMessages() {
         _lastUpdate = new Date();
-        return _msgManager.getAll(this.user.getTopic(), null);
+        return _msgManager.getAll(this.topic.getName(), null);
     }
     
     public List<Message> getAllMessagesAdmin() {

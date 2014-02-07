@@ -5,7 +5,7 @@
       xmlns:f="http://java.sun.com/jsf/core"
       >
     <h:head>
-        <title>Chat: topic #{user.topic}</title>
+        <title>Chat: topic #{topic.name}</title>
     </h:head>
     <script type="text/javascript">
         setInterval(function() {
@@ -25,7 +25,7 @@
         </h:form>
         <hr/>
         <h:form>
-            #{user.name} Say something about #{user.topic}: <h:inputText value="#{messageBean.message.message}"/>
+            #{user.name} Say something about #{topic.name}: <h:inputText value="#{messageBean.message.message}"/>
             <h:commandButton value="Send!" action="#{messageBean.sendMessage()}"/>
             <h:commandButton type="reset" value="Clear"/>
         </h:form>

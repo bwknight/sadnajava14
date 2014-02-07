@@ -1,11 +1,14 @@
+package chat1;
+
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
 
-package chat1;
 
+
+import chat1.*;
 import java.io.Serializable;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
@@ -14,9 +17,9 @@ import javax.faces.bean.SessionScoped;
  *
  * @author user
  */
-@ManagedBean(name = "user")
+@ManagedBean(name = "topic")
 @SessionScoped
-public class UserBean implements Serializable{
+public class TopicBean implements Serializable{
 
     private String _name;
 
@@ -31,7 +34,7 @@ public class UserBean implements Serializable{
     /**
      * Creates a new instance of UserBean
      */
-    public UserBean() {
+    public TopicBean() {
     }
     
 }

@@ -17,7 +17,7 @@
         <h:form id="chatForm">
             <h:dataTable id="outputGroup" value="#{messageBean.getAllMessages()}" var="msg"
                          rendered="#{!facesContext.validationFailed}">
-                <h:column><h:outputText value="#{msg.dateSent}"><f:convertDateTime pattern="hh:mm:ss" /></h:outputText></h:column>
+                <h:column><h:outputText value="#{msg.dateSent}"><f:convertDateTime pattern="HH:mm:ss" /></h:outputText></h:column>
                 <h:column>#{msg.user}</h:column>
                 <h:column>#{msg.message}</h:column>
             </h:dataTable>

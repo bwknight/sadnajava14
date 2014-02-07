@@ -1,0 +1,44 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"      
+      >
+    <h:head>
+        <title>Chat test!</title>
+    </h:head>
+    <script type="text/javascript">
+        setInterval("nextMessage()", 200); //update the chart every 200 ms               
+         
+        function updateMessages(xhr, status, args) {
+            console.log(status);
+            console.log(args);
+            if(!args.ok) return;
+            $('#chat').append('<div class="msg">[' +args.dateSent+ '] <strong>'+args.user+'</strong>: '+args.text+'</div>');
+        }
+         
+    </script>
+    <h:body>
+        <h:form prependId="false">
+            <h:panelGrid columns="2">
+                Name: <h:inputText value="#{messageBean.message.user}"/>
+                Text: <h:inputText value="#{messageBean.message.message}"/>
+                <h:commandButton type="reset" value="Clear"/>
+                <h:commandButton value="Send!" actionListener="#{messageBean.sendMessage}"/>
+            </h:panelGrid>
+ 
+            
+<!--            <h:commandButton name="nextMessage" actionListener="# {messageBean.firstUnreadMessage}"
+                             oncomplete="updateMessages(xhr, status, args);"/>-->
+        </h:form>
+        <h:form>
+            <h:commandButton value="peak" actionListener="#{messageBean.peakMessage}"/>
+            <h:commandButton value="peak all" actionListener="#{messageBean.peakMessages}"/>
+        </h:form>
+        <hr/>
+        <h3>Live chat</h3>
+        <div id="chat"></div>
+
+        <div id="debug">debug</div>
+         <h:messages />
+    </h:body>
+</html>

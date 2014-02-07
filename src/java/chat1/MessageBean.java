@@ -15,6 +15,7 @@ import java.util.List;
 import javax.ejb.EJB;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
+import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
@@ -28,9 +29,15 @@ import javax.faces.event.ActionEvent;
 public class MessageBean implements Serializable {
  
     @EJB
-    MessageManagerLocal mm;
+    MessageManagerLocal _msgManager;
+    
+    @ManagedProperty(value="#{user}")    
+    UserBean user;
+
+    public void setUser(UserBean user) {
+        this.user = user;
+    }
  
-    private final List _messages;
     private Date _lastUpdate;
     private Message _currMessage;
  
@@ -38,13 +45,8 @@ public class MessageBean implements Serializable {
      * Creates a new instance of MessageBean
      */
     public MessageBean() {
-        _messages = Collections.synchronizedList(new LinkedList());
         _lastUpdate = new Date(0);
         _currMessage = new Message();
-    }
- 
-    public String getFoo(){
-        return "fooooooo"; //new Date().toString();
     }
     
     public Date getLastUpdate() {
@@ -63,21 +65,22 @@ public class MessageBean implements Serializable {
         this._currMessage = message;
     }
  
-    public void sendMessage(ActionEvent evt) {
-        mm.sendMessage(_currMessage);        
+    public void sendMessage() {
+        _currMessage.setUser(user.getName()); 
+        _msgManager.sendMessage(_currMessage);        
         FacesMessage fm = new FacesMessage("sent: " + _currMessage.getMessage());
         FacesContext.getCurrentInstance().addMessage(null, fm);
         this._currMessage = new Message();
     }
  
-    public void peakMessage(ActionEvent evt) {
-        Message m = mm.getFirstAfter(_lastUpdate);
+    public void peakMessage() {
+        Message m = _msgManager.getFirstAfter(_lastUpdate);
         String fms =  "peak: " + ((m == null) ? "N\\A" : m.getMessage());
         FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(fms));
     }
     
-    public void peakMessages(ActionEvent evt) {
-        List<Message> mlist = mm.getAll(null);
+    public void peakMessages() {
+        List<Message> mlist = _msgManager.getAll(null);
         int i = 0;
         for (Message message1 : mlist) {
             FacesMessage fm = new FacesMessage("#" + (++i) + ' ' + message1.getMessage());
@@ -86,14 +89,14 @@ public class MessageBean implements Serializable {
         
     }
     
-     public List<Message> getAllMessages() {
-        return mm.getAll(null);
+    public List<Message> getAllMessages() {
+        return _msgManager.getAll(null);
     }
     
     public void firstUnreadMessage(ActionEvent evt) {
 //       RequestContext ctx = RequestContext.getCurrentInstance();
 // 
-       Message m = mm.getFirstAfter(_lastUpdate);
+       Message m = _msgManager.getFirstAfter(_lastUpdate);
         System.out.println("m: " + m);
   
 //       ctx.addCallbackParam("ok", m!=null);

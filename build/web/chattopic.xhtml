@@ -5,9 +5,9 @@
       xmlns:f="http://java.sun.com/jsf/core"
       >
     <h:head>
-        <title>Chat test!</title>
+        <title>Chat topic #{user.topic}</title>
     </h:head>
-    <script type="text/javascript">
+ <script type="text/javascript">
 
         function refreshMsgsEventListener(data){
             // After update of HTML DOM based on ajax response..
@@ -16,27 +16,24 @@
             }
         }
 
-        setInterval(function(){document.getElementById('chatForm:refreshMsgs').click();},2500);
+        setInterval(function(){document.getElementById('chatForm:refreshMsgs').click();},10000);
    
 
     </script>
     <h:body>
         <h:form prependId="false">
             <h:panelGrid columns="2">
-                Name: <h:inputText value="#{messageBean.message.user}"/>
                 Text: <h:inputText value="#{messageBean.message.message}"/>
                 <h:commandButton type="reset" value="Clear"/>
-                <h:commandButton value="Send!" actionListener="#{messageBean.sendMessage}"/>
+                <h:commandButton value="Send!" action="#{messageBean.sendMessage()}"/>
             </h:panelGrid>
         </h:form>
         <h:form>
-            <h:commandButton value="peak" actionListener="#{messageBean.peakMessage}"/>
-            <h:commandButton value="peak all" actionListener="#{messageBean.peakMessages}"/>
+            <h:commandButton value="peak" action="#{messageBean.peakMessage()}"/>
+            <h:commandButton value="peak all" action="#{messageBean.peakMessages()}"/>
         </h:form>
         <hr/>
         <h3>Live chat</h3>
-        <div id="chat"></div>
-
         <h:form id="chatForm">
             <h:commandButton id="refreshMsgs" value="ajax1"> 
                 <f:ajax onevent="refreshMsgsEventListener" render="outputGroup"/>                
@@ -48,7 +45,7 @@
                 <h:column>#{msg.message}</h:column>
                 <h:column><h:outputText value="#{msg.dateSent}"><f:convertDateTime pattern="yyyy-MM-dd hh:mm:ss" /></h:outputText></h:column>
             </h:dataTable>
-            
+
         </h:form>
 
 

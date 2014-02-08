@@ -3,33 +3,34 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package chat.db;
 
 import java.io.Serializable;
+import java.util.Collection;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
-/**
- *
- * @author user
- */
-
 @NamedQuery(
-        name="findUserWithName",
-        query="SELECT u FROM UserDAO u WHERE u.name = :name")
+        name = "findUserWithName",
+        query = "SELECT u FROM UserDAO u WHERE u.name = :name")
 
 @Entity
-@Table(name="users")
+@Table(name = "users")
 public class UserDAO implements Serializable {
+
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
+
+    @OneToMany
+    private Collection<MessageDAO> messages;
+    private String name;
 
     public Long getId() {
         return id;
@@ -61,10 +62,8 @@ public class UserDAO implements Serializable {
 
     @Override
     public String toString() {
-        return "chat.db.UserDAO[ id=" + id + " name=" + name+ " ]";
+        return "chat.db.UserDAO[ id=" + id + " name=" + name + " ]";
     }
-    
-    private String name;
 
     public String getName() {
         return name;
@@ -73,5 +72,12 @@ public class UserDAO implements Serializable {
     public void setName(String name) {
         this.name = name;
     }
-    
+
+    public Collection<MessageDAO> getMessages() {
+        return messages;
+    }
+
+    public void setMessages(Collection<MessageDAO> messages) {
+        this.messages = messages;
+    }
 }

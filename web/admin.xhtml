@@ -21,9 +21,9 @@
                     <h:dataTable id="outputGroup" value="#{messageBean.getAllMessagesAdmin()}" var="msg"
                                  rendered="#{!facesContext.validationFailed}">
                         <h:column><h:outputText value="#{msg.dateSent}"><f:convertDateTime pattern="HH:mm:ss" /></h:outputText></h:column>
-                        <h:column>#{msg.topic}</h:column>
-                        <h:column>#{msg.user}</h:column>
-                        <h:column>#{msg.message}</h:column>                        
+                        <h:column>#{msg.topic.name}</h:column>
+                        <h:column>#{msg.user.name}</h:column>
+                        <h:column>#{msg.text}</h:column>                        
                     </h:dataTable>
 
                 </h:form>

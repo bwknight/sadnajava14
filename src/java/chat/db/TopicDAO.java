@@ -7,11 +7,13 @@
 package chat.db;
 
 import java.io.Serializable;
+import java.util.Collection;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 /**
@@ -29,7 +31,9 @@ public class TopicDAO implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-
+    @OneToMany
+    private Collection<MessageDAO> messages;
+    
     public Long getId() {
         return id;
     }
@@ -72,5 +76,12 @@ public class TopicDAO implements Serializable {
     public void setName(String name) {
         this.name = name;
     }
-    
+
+    public Collection<MessageDAO> getMessages() {
+        return messages;
+    }
+
+    public void setMessages(Collection<MessageDAO> messages) {
+        this.messages = messages;
+    }
 }

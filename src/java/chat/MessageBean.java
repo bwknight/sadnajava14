@@ -5,10 +5,14 @@
  */
 package chat;
 
+import chat.db.MessageDAO;
 import chat.db.TopicDAO;
 import chat.db.UserDAO;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -33,9 +37,6 @@ public class MessageBean implements Serializable {
     @Resource
     private javax.transaction.UserTransaction utx;
 
-    @EJB
-    MessageManager _msgManager;
-
     @ManagedProperty(value = "#{user}")
     UserBean user;
 
@@ -43,14 +44,15 @@ public class MessageBean implements Serializable {
     TopicBean topic;
 
     private Date _lastUpdate;
-    private Message _currMessage;
+    private String _currMessageText;
     private boolean _isTransactionOpen;
+
     /**
      * Creates a new instance of MessageBean
      */
     public MessageBean() {
         _lastUpdate = new Date(0);
-        _currMessage = new Message();
+        _currMessageText = "";
         _isTransactionOpen = false;
     }
 
@@ -69,65 +71,89 @@ public class MessageBean implements Serializable {
     public void setTopic(TopicBean topic) {
         this.topic = topic;
     }
-    
-    public Message getMessage() {
-        return _currMessage;
+
+    public String getMessageText() {
+        return _currMessageText;
     }
 
-    public void setMessage(Message message) {
-        this._currMessage = message;
+    public void setMessageText(String message) {
+        this._currMessageText = message;
     }
 
     public void sendMessage() {
         boolean abortTransaction = true;
         try {
+            UserDAO dbuser;
+            TopicDAO dbTopic;
             // Ensure the user exist, if not - create
             // TODO move this to a login flow
-            List users = em.createNamedQuery("findUserWithName")
+            List<UserDAO> users = em.createNamedQuery("findUserWithName")
                     .setParameter("name", user.getName())
                     .getResultList();
             if (users.isEmpty()) {
-                UserDAO dbuser = new UserDAO();
+                dbuser = new UserDAO();
                 dbuser.setName(user.getName());
                 persist(dbuser);
+            } else {
+                dbuser = users.get(0);
             }
 
             // Ensure the topic exist, if not - create
             // TODO? put this in a create topic flow?
-            List topics = em.createNamedQuery("findTopicWithName")
+            List<TopicDAO> topics = em.createNamedQuery("findTopicWithName")
                     .setParameter("name", topic.getName())
                     .getResultList();
             if (topics.isEmpty()) {
-                TopicDAO dbTopic = new TopicDAO();
+                dbTopic = new TopicDAO();
                 dbTopic.setName(topic.getName());
                 persist(dbTopic);
+            } else {
+                dbTopic = topics.get(0);
             }
 
-            _currMessage.setUser(user.getName());
-            _currMessage.setTopic(topic.getName());
-            _msgManager.sendMessage(_currMessage);
-            this._currMessage = new Message();
-            
+            MessageDAO newMessage = new MessageDAO();
+            newMessage.setUser(dbuser);
+            newMessage.setTopic(dbTopic);
+            newMessage.setDateSent(new Date());
+            newMessage.setText(_currMessageText);
+            persist(newMessage);
+            this._currMessageText = "";
+
             // Reaching here means all went well, we can commit
-            abortTransaction = false; 
+            abortTransaction = false;
         } finally {
             closeTransaction(abortTransaction);
         }
     }
 
-    public List<Message> getAllMessages() {
+    public List<MessageDAO> getAllMessages() {
         _lastUpdate = new Date();
-        return _msgManager.getAll(this.topic.getName(), null);
+
+        List<TopicDAO> topics = em.createNamedQuery("findTopicWithName")
+                .setParameter("name", topic.getName())
+                .getResultList();
+        if (topics.isEmpty()) {
+            return new ArrayList<>();
+        } else {
+            TopicDAO dbTopic = topics.get(0);
+            List<MessageDAO> res = em.createNamedQuery("findMessagesForTopic")
+                    .setParameter("topic", dbTopic)
+                    .getResultList();
+            return res;
+        }
+
     }
 
-    public List<Message> getAllMessagesAdmin() {
+    public List<MessageDAO> getAllMessagesAdmin() {
         _lastUpdate = new Date();
-        return _msgManager.getAll(null, null);
+        List<MessageDAO> res = em.createNamedQuery("findAllMessages")
+                .getResultList();
+        return res;
     }
 
     private void persist(Object object) {
         try {
-            if (!_isTransactionOpen){
+            if (!_isTransactionOpen) {
                 utx.begin();
                 _isTransactionOpen = true;
             }
@@ -139,8 +165,9 @@ public class MessageBean implements Serializable {
     }
 
     private void closeTransaction(boolean abort) {
-        if (!_isTransactionOpen)
+        if (!_isTransactionOpen) {
             return; // nothing to do
+        }
         try {
             _isTransactionOpen = false;
             if (abort) {

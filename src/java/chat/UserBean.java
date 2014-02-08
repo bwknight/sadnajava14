@@ -20,12 +20,13 @@ public class UserBean implements Serializable{
 
     private String _name;
 
+
     public String getName() {
         return _name;
     }
 
-    public void setName(String _name) {
-        this._name = _name;
+    public void setName(String name) {
+        this._name = name;        
     }
 
     /**
@@ -33,5 +34,7 @@ public class UserBean implements Serializable{
      */
     public UserBean() {
     }
+
+ 
     
 }

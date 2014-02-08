@@ -16,7 +16,7 @@
     </script>
     <h:body>
         <h1>Live chat</h1>
-        <h:form id="livechatForm">
+        <h:form id="chatForm">
             <h:dataTable id="outputGroup" value="#{messageBean.getAllMessages()}" var="msg"
                          rendered="#{!facesContext.validationFailed}">
                 <h:column><h:outputText value="#{msg.dateSent}"><f:convertDateTime pattern="HH:mm:ss" /></h:outputText></h:column>

@@ -9,7 +9,7 @@
     </h:head>
     <script type="text/javascript">
         setInterval(function() {
-            document.getElementById('chatForm:refreshMsgs').click();
+            document.getElementById('refreshForm:refreshMsgs').click();
         }, 3000);
     </script>
     <h:body>
@@ -28,7 +28,7 @@
 
                 </h:form>
                 <hr/>
-                <h:form>
+                <h:form id="refreshForm">
                     <h:commandButton id="refreshMsgs" value="refresh"> 
                         <f:ajax render=":chatForm:outputGroup"/>                
                     </h:commandButton>

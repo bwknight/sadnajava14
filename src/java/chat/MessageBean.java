@@ -6,18 +6,15 @@
 package chat;
 
 import chat.db.MessageDAO;
-import chat.db.TopicDAO;
-import chat.db.UserDAO;
+import chat.wsclients.MessagesWS;
+import chat.wsclients.MessagesWS_Service;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Date;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.Resource;
-import javax.ejb.EJB;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.ViewScoped;
@@ -45,15 +42,13 @@ public class MessageBean implements Serializable {
 
     private Date _lastUpdate;
     private String _currMessageText;
-    private boolean _isTransactionOpen;
-
+    
     /**
      * Creates a new instance of MessageBean
      */
     public MessageBean() {
         _lastUpdate = new Date(0);
         _currMessageText = "";
-        _isTransactionOpen = false;
     }
 
     public Date getLastUpdate() {
@@ -107,6 +102,42 @@ public class MessageBean implements Serializable {
         return res;
     }
 
+    public List<chat.wsclients.MessageDAO> getAllMessagesAdminApi() {
+        _lastUpdate = new Date();        
+        MessagesWS port = new MessagesWS_Service().getMessagesWSPort();
+        return port.getAllMessages();
+    }
+    
+    private String _adminQueryUser;
+
+    public String getAdminQueryUser() {
+        return _adminQueryUser;
+    }
+
+    public void setAdminQueryUser(String adminQueryUser) {
+        this._adminQueryUser = adminQueryUser;
+    }
+    public List<chat.wsclients.MessageDAO> getUserMessagesAdminApi() {
+        _lastUpdate = new Date();        
+        MessagesWS port = new MessagesWS_Service().getMessagesWSPort();
+        return port.getUserMessages(_adminQueryUser);
+    }
+    
+    private String _adminQueryTopic;
+
+    public String getAdminQueryTopic() {
+        return _adminQueryTopic;
+    }
+
+    public void setAdminQueryTopic(String _adminQueryTopic) {
+        this._adminQueryTopic = _adminQueryTopic;
+    }
+    
+    public List<chat.wsclients.MessageDAO> getTopicMessagesAdminApi() {
+        _lastUpdate = new Date();        
+        MessagesWS port = new MessagesWS_Service().getMessagesWSPort();
+        return port.getTopicMessages(_adminQueryTopic);
+    }
     private void persist(Object object) {
         try {
             utx.begin();

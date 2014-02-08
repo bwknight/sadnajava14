@@ -17,23 +17,49 @@
         <ul>
             <li>
                 <div>Live chat </div>
-                <h:form id="chatForm">
-                    <h:dataTable id="outputGroup" value="#{messageBean.getAllMessagesAdmin()}" var="msg"
+                <h:form id="livechatForm">
+                    <h:dataTable id="outputGroup" value="#{messageBean.getAllMessagesAdminApi()}" var="msg"
                                  rendered="#{!facesContext.validationFailed}">
-                        <h:column><h:outputText value="#{msg.dateSent}"><f:convertDateTime pattern="HH:mm:ss" /></h:outputText></h:column>
+                        <h:column>#{msg.dateSent}"</h:column>
                         <h:column>#{msg.topic.name}</h:column>
                         <h:column>#{msg.user.name}</h:column>
                         <h:column>#{msg.text}</h:column>                        
                     </h:dataTable>
 
                 </h:form>
-                <hr/>
                 <h:form id="refreshForm">
                     <h:commandButton id="refreshMsgs" value="refresh"> 
-                        <f:ajax render=":chatForm:outputGroup"/>                
+                        <f:ajax render=":livechatForm:outputGroup"/>                
                     </h:commandButton>
                 </h:form> 
             </li>
+            <li>
+                <div>See chat messages of a user </div>
+                <h:form id="userchatForm">
+                    <h:inputText id="userName" value="#{messageBean.adminQueryUser}" />
+                    <h:dataTable id="outputGroup" value="#{messageBean.getUserMessagesAdminApi()}" var="msg"
+                                 rendered="#{!facesContext.validationFailed}">
+                        <h:column>#{msg.dateSent}"</h:column>
+                        <h:column>#{msg.topic.name}</h:column>
+                        <h:column>#{msg.text}</h:column>                        
+                    </h:dataTable>
+                    <h:commandButton value="load messages of user" type="submit"/>
+                </h:form>
+            </li>
+            <li>
+                <div>See chat messages of a topic </div>
+                <h:form id="topicchatForm">
+                    <h:inputText id="topicName" value="#{messageBean.adminQueryTopic}" />
+                    <h:dataTable id="outputGroup" value="#{messageBean.getTopicMessagesAdminApi()}" var="msg"
+                                 rendered="#{!facesContext.validationFailed}">
+                        <h:column>#{msg.dateSent}"</h:column>
+                        <h:column>#{msg.user.name}</h:column>
+                        <h:column>#{msg.text}</h:column>                        
+                    </h:dataTable>
+                    <h:commandButton value="load messages of topic" type="submit"/>
+                </h:form>
+            </li>
+
             <li>
                 <div>Queues</div>
             </li>

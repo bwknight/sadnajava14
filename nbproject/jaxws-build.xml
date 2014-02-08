@@ -19,11 +19,11 @@
             <classpath path="${java.home}/../lib/tools.jar:${build.classes.dir}:${j2ee.platform.wsgen.classpath}:${javac.classpath}"/>
         </taskdef>
     </target>
-    <target name="wsgen-NewWebService" depends="wsgen-init">
+    <target name="wsgen-MessagesWS" depends="wsgen-init">
         <copy todir="${build.classes.dir}/META-INF">
-            <fileset dir="${webinf.dir}" includes="wsit-chat.ws.NewWebService.xml"/>
+            <fileset dir="${webinf.dir}" includes="wsit-chat.ws.MessagesWS.xml"/>
         </copy>
-        <wsgen sourcedestdir="${build.generated.sources.dir}/jax-ws" resourcedestdir="${build.generated.sources.dir}/jax-ws/resources/" destdir="${build.generated.sources.dir}/jax-ws" verbose="true" keep="true" genwsdl="true" sei="chat.ws.NewWebService" xendorsed="true">
+        <wsgen sourcedestdir="${build.generated.sources.dir}/jax-ws" resourcedestdir="${build.generated.sources.dir}/jax-ws/resources/" destdir="${build.generated.sources.dir}/jax-ws" verbose="true" keep="true" genwsdl="true" sei="chat.ws.MessagesWS" xendorsed="true">
             <classpath path="${java.home}/../lib/tools.jar:${build.classes.dir}:${j2ee.platform.wsgen.classpath}:${javac.classpath}"/>
         </wsgen>
     </target>
@@ -32,4 +32,32 @@
                 JAX-WS WSIMPORT SECTION
                 ===================
             -->
+    <target name="wsimport-init" depends="init">
+        <fail if="${wsimport.bad.version}" message="WsImport ant task defined in the classpath ${j2ee.platform.wsimport.classpath} has a serious bug. See http://wiki.netbeans.org/MetroIssue for details."/>
+        <mkdir dir="${build.generated.sources.dir}/jax-ws"/>
+        <property name="j2ee.platform.wsimport.classpath" value="${libs.jaxws21.classpath}"/>
+        <taskdef name="wsimport" classname="com.sun.tools.ws.ant.WsImport">
+            <classpath path="${java.home}/../lib/tools.jar:${j2ee.platform.wsimport.classpath}:${javac.classpath}"/>
+        </taskdef>
+        <condition property="conf-dir" value="${conf.dir}/" else="">
+            <isset property="conf.dir"/>
+        </condition>
+    </target>
+    <target name="wsimport-client-MessagesWS" depends="wsimport-init">
+        <mkdir dir="${build.generated.dir}/jax-wsCache/MessagesWS"/>
+        <wsimport sourcedestdir="${build.generated.dir}/jax-wsCache/MessagesWS" destdir="${build.generated.dir}/jax-wsCache/MessagesWS" wsdl="${basedir}/${conf-dir}xml-resources/web-service-references/MessagesWS/wsdl/localhost_8080/MessagesWS/MessagesWS.wsdl" catalog="catalog.xml" encoding="${source.encoding}" extension="true" verbose="true" fork="false" wsdlLocation="http://localhost:8080/MessagesWS/MessagesWS?wsdl" xnocompile="true" xendorsed="true" package="chat.wsclients">
+            <depends file="${basedir}/${conf-dir}xml-resources/web-service-references/MessagesWS/wsdl/localhost_8080/MessagesWS/MessagesWS.wsdl"/>
+            <produces dir="${build.generated.dir}/jax-wsCache/MessagesWS"/>
+        </wsimport>
+        <copy todir="${build.generated.sources.dir}/jax-ws">
+            <fileset dir="${build.generated.dir}/jax-wsCache/MessagesWS">
+                <include name="**/*.java"/>
+            </fileset>
+        </copy>
+    </target>
+    <target name="wsimport-client-clean-MessagesWS" depends="-init-project">
+        <delete dir="${build.generated.sources.dir}/jax-ws/chat/wsclients"/>
+        <delete dir="${build.generated.dir}/jax-wsCache/MessagesWS"/>
+    </target>
+    <target name="wsimport-client-generate" depends="wsimport-client-MessagesWS"/>
 </project>
